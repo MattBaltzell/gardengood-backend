@@ -12,13 +12,13 @@ const PORT = +process.env.PORT || 3001;
 // Use dev database, testing database, or via env var, production database
 function getDatabaseUri() {
   return process.env.NODE_ENV === "test"
-    ? "gardengood-test"
+    ? "gardengood_test"
     : process.env.DATABASE_URL || "gardengood";
 }
 
 // Speed up bcrypt during tests, since the algorithm safety isn't being tested
 
-const BCRYPT_WORK_FACTOR = (process.env.NODE_ENV = "test" ? 1 : 12);
+const BCRYPT_WORK_FACTOR = process.env.NODE_ENV === "test" ? 1 : 12;
 
 console.log("GardenGood Config:".green);
 console.log("SECRET_KEY:".yellow, SECRET_KEY);
