@@ -7,12 +7,12 @@ CREATE TABLE plants (
     description TEXT NOT NULL,
     days_to_maturity_min INT,
     days_to_maturity_max INT
-)
+);
 
 CREATE TABLE seasons (
     id SERIAL ,
     name VARCHAR(25) NOT NULL
-)
+);
 
 CREATE TABLE plants_seasons (
     plant_id INT
@@ -20,12 +20,12 @@ CREATE TABLE plants_seasons (
     season_id INT
       REFERENCES seasons ON DELETE CASCADE
     PRIMARY KEY (plant_id, season_id)
-)
+);
 
 CREATE TABLE sunlight (
     id SERIAL PRIMARY KEY,
     name VARCHAR(25) NOT NULL
-)
+);
 
 CREATE TABLE plants_sunlight (
     plant_id INT
@@ -33,12 +33,12 @@ CREATE TABLE plants_sunlight (
     sunlight_id INT,
       REFERENCES sunlight ON DELETE CASCADE
     PRIMARY KEY (plant_id, sunlight_id)
-)
+);
 
 CREATE TABLE instruction_types (
     name VARCHAR(25) PRIMARY KEY,
     description TEXT NOT NULL
-)
+);
 
 CREATE TABLE instructions (
     plant_id INT PRIMARY KEY
@@ -46,7 +46,7 @@ CREATE TABLE instructions (
     type TEXT PRIMARY KEY
       REFERENCES instruction_types,
     description TEXT NOT NULL
-)
+);
 
 CREATE TABLE users (
   username VARCHAR(25) PRIMARY KEY,
@@ -66,21 +66,21 @@ CREATE TABLE gardens (
     id SERIAL PRIMARY KEY,
     name VARCHAR(25) NOT NULL,
     description TEXT
-)
+);
 
 CREATE TABLE users_gardens (
     username VARCHAR(25) PRIMARY KEY
       REFERENCES users ON DELETE CASCADE,
     garden_id INT PRIMARY KEY
       REFERENCES gardens ON DELETE CASCADE
-)
+);
 
 CREATE TABLE beds (
     id SERIAL PRIMARY KEY,
     name VARCHAR(25) NOT NULL,
     garden_id INT NOT NULL
       REFERENCES gardens ON DELETE CASCADE
-)
+);
 
 CREATE TABLE crops (
     id SERIAL PRIMARY KEY,
@@ -90,7 +90,7 @@ CREATE TABLE crops (
         REFERENCES beds ON DELETE CASCADE,
     qty INT NOT NULL,
     planted_at TIMESTAMP
-)
+);
 
 CREATE TABLE notes (
     id SERIAL PRIMARY KEY,
@@ -98,4 +98,4 @@ CREATE TABLE notes (
     created_at TIMESTAMP,
     title VARCHAR(25),
     description TEXT NOT NULL
-)
+);
