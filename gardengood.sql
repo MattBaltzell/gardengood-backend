@@ -6,6 +6,7 @@ CREATE DATABASE gardengood;
 \connect gardengood
 
 \i gardengood-schema.sql
+\i gardengood-seed.sql
 
 \echo 'Delete and recreate gardengood_test db?'
 \prompt 'Return for yes or control-C to cancel > ' foo
