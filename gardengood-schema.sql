@@ -1,6 +1,6 @@
 CREATE TABLE plants (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(25) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     species TEXT NOT NULL,
     img_url TEXT NOT NULL,
     is_perrenial BOOLEAN NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE plants (
 );
 
 CREATE TABLE seasons (
-    id SERIAL ,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(25) NOT NULL
 );
 
@@ -18,7 +18,7 @@ CREATE TABLE plants_seasons (
     plant_id INT
       REFERENCES plants ON DELETE CASCADE,
     season_id INT
-      REFERENCES seasons ON DELETE CASCADE
+      REFERENCES seasons ON DELETE CASCADE,
     PRIMARY KEY (plant_id, season_id)
 );
 
@@ -30,8 +30,8 @@ CREATE TABLE sunlight (
 CREATE TABLE plants_sunlight (
     plant_id INT
       REFERENCES plants ON DELETE CASCADE,
-    sunlight_id INT,
-      REFERENCES sunlight ON DELETE CASCADE
+    sunlight_id INT
+      REFERENCES sunlight ON DELETE CASCADE,
     PRIMARY KEY (plant_id, sunlight_id)
 );
 
@@ -41,11 +41,12 @@ CREATE TABLE instruction_types (
 );
 
 CREATE TABLE instructions (
-    plant_id INT PRIMARY KEY
+    plant_id INT 
       REFERENCES plants ON DELETE CASCADE,
-    type TEXT PRIMARY KEY
+    type TEXT 
       REFERENCES instruction_types,
-    description TEXT NOT NULL
+    description TEXT NOT NULL,
+    PRIMARY KEY (plant_id, type)
 );
 
 CREATE TABLE users (
@@ -69,10 +70,11 @@ CREATE TABLE gardens (
 );
 
 CREATE TABLE users_gardens (
-    username VARCHAR(25) PRIMARY KEY
+    username VARCHAR(25) NOT NULL
       REFERENCES users ON DELETE CASCADE,
-    garden_id INT PRIMARY KEY
-      REFERENCES gardens ON DELETE CASCADE
+    garden_id INT NOT NULL
+      REFERENCES gardens ON DELETE CASCADE,
+      PRIMARY KEY (username, garden_id)
 );
 
 CREATE TABLE beds (
