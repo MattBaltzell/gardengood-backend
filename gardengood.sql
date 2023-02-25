@@ -6,6 +6,7 @@ CREATE DATABASE gardengood;
 \connect gardengood
 
 \i gardengood-schema.sql
+\i gardengood-initialdata.sql
 \i gardengood-seed.sql
 
 \echo 'Delete and recreate gardengood_test db?'
@@ -16,3 +17,4 @@ CREATE DATABASE gardengood_test;
 \connect gardengood_test
 
 \i gardengood-schema.sql
+\i gardengood-initialdata.sql
