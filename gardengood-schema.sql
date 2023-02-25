@@ -24,7 +24,8 @@ CREATE TABLE plants_seasons (
 
 CREATE TABLE sunlight (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(25) NOT NULL
+    name VARCHAR(25) NOT NULL,
+    description TEXT NOT NULL
 );
 
 CREATE TABLE plants_sunlight (
@@ -36,17 +37,17 @@ CREATE TABLE plants_sunlight (
 );
 
 CREATE TABLE instruction_types (
-    name VARCHAR(25) PRIMARY KEY,
-    description TEXT NOT NULL
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(25) NOT NULL
 );
 
 CREATE TABLE instructions (
     plant_id INT 
       REFERENCES plants ON DELETE CASCADE,
-    type TEXT 
+    type_id INT 
       REFERENCES instruction_types,
     description TEXT NOT NULL,
-    PRIMARY KEY (plant_id, type)
+    PRIMARY KEY (plant_id, type_id)
 );
 
 CREATE TABLE users (
