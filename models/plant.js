@@ -30,7 +30,8 @@ class Plant {
       ON p.id = pse.plant_id
       JOIN seasons AS sea
       ON pse.season_id = sea.id
-      GROUP BY p.id`
+      GROUP BY p.id
+      ORDER BY p.name`
     );
 
     return plants.rows;
@@ -39,7 +40,7 @@ class Plant {
   /** Given a plant id, return data about a plant */
 
   static async get(id) {
-    const plant = await db.query(
+    const plantRes = await db.query(
       `
       SELECT p.id,
           p.name,
@@ -65,8 +66,31 @@ class Plant {
       [id]
     );
 
-    if (!plant.rows[0]) throw new NotFoundError(`No plant: ${id}`);
-    return plant.rows[0];
+    if (!plantRes.rows[0]) throw new NotFoundError(`No plant: ${id}`);
+
+    const plant = plantRes.rows[0];
+
+    const instructionsRes = await db.query(
+      `
+      SELECT it.name, 
+        i.description
+      FROM instructions AS i
+      JOIN instruction_types As it
+      ON i.type_id = it.id
+      WHERE i.plant_id = $1`,
+      [id]
+    );
+
+    const instructionsArr = instructionsRes.rows;
+
+    const instructions = {};
+    instructionsArr.forEach(
+      (inst) => (instructions[inst.name] = inst.description)
+    );
+
+    plant.instructions = instructions;
+
+    return plant;
   }
 }
 
