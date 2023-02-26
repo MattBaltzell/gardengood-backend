@@ -1,6 +1,6 @@
 CREATE TABLE plants (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL UNIQUE,
     species TEXT NOT NULL,
     img_url TEXT NOT NULL,
     is_perrenial BOOLEAN NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE plants (
 
 CREATE TABLE seasons (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(25) NOT NULL
+    name VARCHAR(25) NOT NULL UNIQUE
 );
 
 CREATE TABLE plants_seasons (
@@ -24,7 +24,7 @@ CREATE TABLE plants_seasons (
 
 CREATE TABLE sunlight (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(25) NOT NULL,
+    name VARCHAR(25) NOT NULL UNIQUE,
     description TEXT NOT NULL
 );
 
@@ -38,7 +38,7 @@ CREATE TABLE plants_sunlight (
 
 CREATE TABLE instruction_types (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(25) NOT NULL
+    name VARCHAR(25) NOT NULL UNIQUE
 );
 
 CREATE TABLE instructions (
@@ -55,11 +55,11 @@ CREATE TABLE users (
   password TEXT NOT NULL,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
-  email TEXT NOT NULL
+  email TEXT NOT NULL UNIQUE
     CHECK (position('@' IN email) > 1),
   zip_code INT,
-  created_at TIMESTAMP,
-  last_login_at TIMESTAMP,
+  join_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  last_login_at TIMESTAMP WITH TIME ZONE,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -92,7 +92,7 @@ CREATE TABLE crops (
     bed_id INT NOT NULL
         REFERENCES beds ON DELETE CASCADE,
     qty INT NOT NULL,
-    planted_at TIMESTAMP
+    planted_at TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TABLE notes (
