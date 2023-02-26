@@ -1,16 +1,17 @@
 INSERT INTO seasons (name)
     VALUES
-        ('early spring'),('spring'),
-        ('late spring'),
-        ('early summer'),
-        ('summer'),
-        ('late summer'),
-        ('early fall') ,
-        ('fall'),
-        ('late fall'),
-        ('early winter'),
-        ('winter'),
-        ('late winter');
+        ('Early Spring'),
+        ('Spring'),
+        ('Late Spring'),
+        ('Early Summer'),
+        ('Summer'),
+        ('Late Summer'),
+        ('Early Fall') ,
+        ('Fall'),
+        ('Late Fall'),
+        ('Early Winter'),
+        ('Winter'),
+        ('Late Winter');
 
 INSERT INTO sunlight (name,description)
     VALUES
@@ -21,6 +22,6 @@ INSERT INTO sunlight (name,description)
 
 INSERT INTO instruction_types (name)
     VALUES
-        ('Planting'),
-        ('Pruning'),
-        ('Watering');
+        ('planting'),
+        ('pruning'),
+        ('watering');
