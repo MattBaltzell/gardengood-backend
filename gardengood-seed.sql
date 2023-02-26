@@ -102,7 +102,9 @@ INSERT INTO plants (name,
 
     ('Cucumber (National Pickling)', 'Cucumis Sativus', 'https://gardengood.s3.us-east-2.amazonaws.com/cucumber.jpg', false, 'One of the best cucumbers for pickling, our National Pickling Cucumber seeds grow very high-yielding vines of blocky fruit that is crispy and tender-skinned. Pickling. It holds its quality longer than most varieties and is a top-notch selection for pickling when harvested young. When planting your pickling cucumber seeds outdoors be sure to sow them in an area with full sun. In smaller gardens, planting this pickling cucumber variety along a fence or trellis is the way to go!', 55, 60),
 
-    ('Leek (American Flag)', 'Allium Ampeloprasum', 'https://gardengood.s3.us-east-2.amazonaws.com/leek.jpg', false, 'This leek variety has large, white stems that often measure 8"-10" long and 2" across. The leek stems are tender and have excellent flavor, making them ideal for fresh consumption or cooked in soups! Yum! To use leeks, cut off their roots (the very tip of their white stems) and then dice, slice and/or mash them in any way you''d like. Leeks are cold tolerant.', 150, 155);
+    ('Leek (American Flag)', 'Allium Ampeloprasum', 'https://gardengood.s3.us-east-2.amazonaws.com/leek.jpg', false, 'This leek variety has large, white stems that often measure 8"-10" long and 2" across. The leek stems are tender and have excellent flavor, making them ideal for fresh consumption or cooked in soups! Yum! To use leeks, cut off their roots (the very tip of their white stems) and then dice, slice and/or mash them in any way you''d like. Leeks are cold tolerant.', 150, 155)
+    
+    RETURNING id, name;
 
 INSERT INTO plants_seasons (plant_id, season_id)
     VALUES
@@ -239,3 +241,14 @@ INSERT INTO plants_sunlight (plant_id, sunlight_id)
         (48,1),
         (49,1),
         (50,1);
+
+
+INSERT INTO instructions (plant_id, type_id, description )
+    VALUES
+        (1, 1, 'Start Habanero Pepper seeds indoors 8 weeks before planting outdoors. Keep seeds moist in full sunlight. Transplant when 3" tall. Or, sow directly in the garden in a sunny location after the danger of frost is past. Plant 2 seeds every 18"  Use a balanced fertilizer when 6" tall to increase production.'),
+
+        (1,2, 'Thin or transplant to 1 plant every 18" when 3" tall.'),
+
+        (2,1,'Start seeds indoors in a sunny location six to eight weeks prior to warm weather. Transplant outdoors in full sun when seedlings display 4-6 true leaves and weather is warm. Seeds can be sown directly into the garden when soil is warm. Tomatoes cannot tolerate frost.'),
+
+        (2,2, 'Harvest regularly');
