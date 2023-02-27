@@ -2,10 +2,68 @@
 
 const db = require("../db");
 const { NotFoundError } = require("../expressError");
+const Sunlight = require("../models/sunlight");
+const GrowingSeason = require("../models/growingSeason");
+const Instruction = require("../models/instruction");
 
 class Plant {
-  /** Find all plants
+  /**
+   * Create plant
    *
+   * data => {name,species,imgUrl,isPerrineal,description, daysToMaturityMin, daysToMaturityMax, sunlight[], growingSeasons[], instructions{}}
+   */
+
+  static async create(data) {
+    const plantRes = await db.query(
+      `
+      INSERT INTO plants
+        (name, species, img_url, is_perrenial, description, days_to_maturity_min, days_to_maturity_max)
+        VALUES ($1,$2,$3,$4,$5,$6,$7)
+        RETURNING id, name
+      `,
+      [
+        data.name,
+        data.species,
+        data.imgUrl,
+        data.isPerrenial,
+        data.description,
+        data.daysToMaturityMin,
+        data.daysToMaturityMax,
+      ]
+    );
+
+    const plant = plantRes.rows[0];
+
+    /** Add Sunlight to Plant
+     * takes in array of sunlightIds [sunlightId, sunlightId,...]
+     */
+    data.sunlight.forEach(async (sunlightId) => {
+      await Sunlight.create(plant.id, sunlightId);
+    });
+
+    /** Add Growing Seasons to Plant
+     * takes in array of seasonIds [seasonId, seasonId,...]
+     */
+    data.growingSeasons.forEach(async (seasonId) => {
+      await GrowingSeason.create(plant.id, seasonId);
+    });
+
+    /** Add Instructions to Plant
+     * takes in array of objects [{typeId, description},{typeId, description},...]
+     */
+    data.instructions.forEach(async (instruction) => {
+      await Instruction.create(
+        plant.id,
+        instruction.typeId,
+        instruction.description
+      );
+    });
+
+    return plant.id;
+  }
+
+  /**
+   * Find all plants
    */
 
   static async findAll() {
@@ -83,7 +141,7 @@ class Plant {
 
     const instructionsArr = instructionsRes.rows;
 
-    const instructions = {};
+    const instructions = { planting: "", pruning: "", watering: "" };
     instructionsArr.forEach(
       (inst) => (instructions[inst.name] = inst.description)
     );
