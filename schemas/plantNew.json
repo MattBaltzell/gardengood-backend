@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/plantNew.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "species": {
+      "type": "string"
+    },
+    "imgUrl": {
+      "type": "string"
+    },
+    "isPerrenial": {
+      "type": "boolean"
+    },
+    "description": {
+      "type": "string"
+    },
+    "daysToMaturityMin": {
+      "type": "integer"
+    },
+    "daysToMaturityMax": {
+      "type": "integer"
+    },
+    "sunlight": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "growingSeasons": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "instructions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "typeId": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["typeId", "description"]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "species",
+    "imgUrl",
+    "isPerrenial",
+    "description",
+    "daysToMaturityMin",
+    "daysToMaturityMax"
+  ]
+}
