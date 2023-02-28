@@ -16,6 +16,57 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
+/************************************** POST /plants */
+
+describe("POST /plants/", function () {
+  const plant = {
+    name: "POST Route Test Plant",
+    species: "Test Plant Species",
+    imgUrl: "Test Plant URL",
+    isPerrenial: false,
+    description: "Test Plant Description",
+    daysToMaturityMin: 50,
+    daysToMaturityMax: 100,
+    sunlight: [1, 2],
+    growingSeasons: [2, 8],
+    instructions: [
+      { typeId: 1, description: "plant them" },
+      { typeId: 2, description: "prune them" },
+    ],
+  };
+  test("works", async function () {
+    const res = await request(app).post(`/plants`).send(plant);
+    expect(res.statusCode).toEqual(201);
+    expect(res.body).toEqual({
+      id: expect.any(Number),
+    });
+  });
+
+  test("bad request when missing parameters", async function () {
+    const data = {
+      name: "POST Route Test Plant",
+      daysToMaturityMin: 50,
+      daysToMaturityMax: 100,
+      sunlight: [1, 2],
+      growingSeasons: [2, 8],
+      instructions: [
+        { typeId: 1, description: "plant them" },
+        { typeId: 2, description: "prune them" },
+      ],
+    };
+    const resp = await request(app).post("/plants").send(data);
+    expect(resp.statusCode).toEqual(400);
+  });
+
+  test("bad request when attempting to update invalid parameter", async function () {
+    const resp = await request(app)
+      .post("/plants")
+      .send({ ...plant, tastesYummy: true });
+
+    expect(resp.statusCode).toEqual(400);
+  });
+});
+
 /************************************** GET /plants/:id */
 
 describe("GET /plants/:id", function () {
