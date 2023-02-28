@@ -14,21 +14,34 @@ class Plant {
    */
 
   static async create(data) {
+    const {
+      name,
+      species,
+      imgUrl,
+      isPerrenial,
+      description,
+      daysToMaturityMin,
+      daysToMaturityMax,
+      sunlight,
+      growingSeasons,
+      instructions,
+    } = data;
+
     const plantRes = await db.query(
       `
       INSERT INTO plants
         (name, species, img_url, is_perrenial, description, days_to_maturity_min, days_to_maturity_max)
         VALUES ($1,$2,$3,$4,$5,$6,$7)
-        RETURNING id, name
+        RETURNING id
       `,
       [
-        data.name,
-        data.species,
-        data.imgUrl,
-        data.isPerrenial,
-        data.description,
-        data.daysToMaturityMin,
-        data.daysToMaturityMax,
+        name,
+        species,
+        imgUrl,
+        isPerrenial,
+        description,
+        daysToMaturityMin,
+        daysToMaturityMax,
       ]
     );
 
@@ -37,21 +50,21 @@ class Plant {
     /** Add Sunlight to Plant
      * takes in array of sunlightIds [sunlightId, sunlightId,...]
      */
-    data.sunlight.forEach(async (sunlightId) => {
+    sunlight.forEach(async (sunlightId) => {
       await Sunlight.create(plant.id, sunlightId);
     });
 
     /** Add Growing Seasons to Plant
      * takes in array of seasonIds [seasonId, seasonId,...]
      */
-    data.growingSeasons.forEach(async (seasonId) => {
+    growingSeasons.forEach(async (seasonId) => {
       await GrowingSeason.create(plant.id, seasonId);
     });
 
     /** Add Instructions to Plant
      * takes in array of objects [{typeId, description},{typeId, description},...]
      */
-    data.instructions.forEach(async (instruction) => {
+    instructions.forEach(async (instruction) => {
       await Instruction.create(
         plant.id,
         instruction.typeId,
@@ -59,7 +72,7 @@ class Plant {
       );
     });
 
-    return plant.id;
+    return plant;
   }
 
   /**
