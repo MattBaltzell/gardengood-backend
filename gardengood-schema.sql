@@ -57,7 +57,7 @@ CREATE TABLE users (
   last_name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE
     CHECK (position('@' IN email) > 1),
-  zip_code INT,
+  zip_code TEXT,
   join_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
   last_login_at TIMESTAMP WITH TIME ZONE,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
