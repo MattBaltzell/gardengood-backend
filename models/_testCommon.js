@@ -12,6 +12,26 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM plants_sunlight");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM plants");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM users");
+
+  await db.query(
+    `
+        INSERT INTO users(username,
+                          password,
+                          first_name,
+                          last_name,
+                          email,
+                          zip_code,
+                          join_at)
+        VALUES ('u1', $1, 'U1F', 'U1L', 'u1@email.com','36830', CURRENT_TIMESTAMP),
+               ('u2', $2, 'U2F', 'U2L', 'u2@email.com','36830', CURRENT_TIMESTAMP)
+        RETURNING username`,
+    [
+      await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
+      await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
+    ]
+  );
 
   const plant1Res = await db.query(
     `
@@ -127,7 +147,4 @@ module.exports = {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  plant1,
-  plant2,
-  plant3,
 };
