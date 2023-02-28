@@ -163,6 +163,23 @@ class Plant {
 
     return plant;
   }
+
+  /** Delete given user from database; returns undefined. */
+
+  static async remove(id) {
+    let result = await db.query(
+      `DELETE
+         FROM plants
+         WHERE id = $1
+         RETURNING id`,
+      [id]
+    );
+    const plant = result.rows[0];
+
+    if (!plant) throw new NotFoundError(`No plant: ${id}`);
+
+    return { deleted: plant.id };
+  }
 }
 
 module.exports = Plant;
