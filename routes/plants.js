@@ -46,4 +46,15 @@ router.get("/:id", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
+/** Delete plant by id */
+
+router.delete("/:id", ensureAdmin, async function (req, res, next) {
+  try {
+    const deleted = await Plant.remove(req.params.id);
+    return res.json(deleted);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

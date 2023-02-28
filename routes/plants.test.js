@@ -3,6 +3,7 @@
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db");
+const Plant = require("../models/plant");
 
 const {
   commonBeforeAll,
@@ -87,6 +88,7 @@ describe("GET /plants/:id", function () {
     const res = await request(app)
       .get(`/plants/${plant1Id}`)
       .set("authorization", `Bearer ${u1Token}`);
+    expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual({
       plant: {
         id: expect.any(Number),
@@ -117,6 +119,7 @@ describe("GET /plants/:id", function () {
     const res = await request(app)
       .get(`/plants/${plant1Id}`)
       .set("authorization", `Bearer ${adminToken}`);
+    expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual({
       plant: {
         id: expect.any(Number),
@@ -156,6 +159,7 @@ describe("GET /plants/", function () {
     const res = await request(app)
       .get(`/plants/`)
       .set("authorization", `Bearer ${u1Token}`);
+    expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual({
       plants: [
         {
@@ -190,6 +194,7 @@ describe("GET /plants/", function () {
     const res = await request(app)
       .get(`/plants/`)
       .set("authorization", `Bearer ${adminToken}`);
+    expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual({
       plants: [
         {
@@ -223,5 +228,22 @@ describe("GET /plants/", function () {
   test("unauth when anon", async function () {
     const res = await request(app).get(`/plants/`);
     expect(res.statusCode).toEqual(401);
+  });
+});
+
+/************************************** DELETE /plants/:id */
+
+describe("DELETE /plants/:id", function () {
+  test("works", async function () {
+    const plantRes = await db.query(
+      `SELECT id FROM plants WHERE name='Routes Test Plant 2'`
+    );
+    console.log(plantRes);
+    const id = plantRes.rows[0].id;
+    const res = await request(app)
+      .delete(`/plants/${id}`)
+      .set("authorization", `Bearer ${adminToken}`);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual({ deleted: id });
   });
 });
