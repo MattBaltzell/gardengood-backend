@@ -130,6 +130,22 @@ async function commonBeforeAll() {
   );
 }
 
+const newPlantData = {
+  name: "CREATE Test Plant",
+  species: "Test Plant Species",
+  imgUrl: "Test Plant URL",
+  isPerrenial: false,
+  description: "Test Plant Description",
+  daysToMaturityMin: 50,
+  daysToMaturityMax: 100,
+  sunlight: [1, 2],
+  growingSeasons: [2, 8],
+  instructions: [
+    { typeId: 1, description: "plant them" },
+    { typeId: 2, description: "prune them" },
+  ],
+};
+
 async function commonBeforeEach() {
   await db.query("BEGIN");
 }
@@ -147,4 +163,5 @@ module.exports = {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  newPlantData,
 };

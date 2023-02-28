@@ -8,12 +8,23 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  newPlantData,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
+
+/************************************** create(data) */
+describe("create", function () {
+  test("works", async function () {
+    const plant = await Plant.create(newPlantData);
+    expect(plant).toEqual({
+      id: expect.any(Number),
+    });
+  });
+});
 
 /************************************** findAll() */
 
@@ -92,6 +103,29 @@ describe("get", function () {
   test("notfounderror if plant with given id is not found", async function () {
     try {
       await Plant.get(99);
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+/************************************** remove */
+
+describe("remove", function () {
+  test("works", async function () {
+    const plantRes = await db.query(
+      `SELECT id FROM plants WHERE name='Test Plant 1'`
+    );
+    const plantID = plantRes.rows[0].id;
+    await Plant.remove(plantID);
+    const res = await db.query(`SELECT * FROM plants WHERE id=$1`, [plantID]);
+    expect(res.rows.length).toEqual(0);
+  });
+
+  test("not found if no such plant", async function () {
+    try {
+      await Plant.remove(0);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
