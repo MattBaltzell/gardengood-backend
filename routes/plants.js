@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require("express");
+const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
 const jsonschema = require("jsonschema");
 const plantNewSchema = require("../schemas/plantNew.json");
 const Plant = require("../models/plant");
@@ -9,7 +10,7 @@ const router = express.Router();
 
 /** Create new plant */
 
-router.post("/", async function (req, res, next) {
+router.post("/", ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, plantNewSchema);
     if (!validator.valid) {
@@ -25,7 +26,7 @@ router.post("/", async function (req, res, next) {
 
 /** Show all plants */
 
-router.get("/", async function (req, res, next) {
+router.get("/", ensureLoggedIn, async function (req, res, next) {
   try {
     const plants = await Plant.findAll();
     return res.json({ plants });
@@ -36,7 +37,7 @@ router.get("/", async function (req, res, next) {
 
 /** Get plant by id */
 
-router.get("/:id", async function (req, res, next) {
+router.get("/:id", ensureLoggedIn, async function (req, res, next) {
   try {
     const plant = await Plant.get(req.params.id);
     return res.json({ plant });

@@ -97,11 +97,28 @@ const u1Token = createToken({ username: "u1", isAdmin: false });
 const u2Token = createToken({ username: "u2", isAdmin: false });
 const adminToken = createToken({ username: "admin", isAdmin: true });
 
+const newPlantData = {
+  name: "POST Route Test Plant",
+  species: "Test Plant Species",
+  imgUrl: "Test Plant URL",
+  isPerrenial: false,
+  description: "Test Plant Description",
+  daysToMaturityMin: 50,
+  daysToMaturityMax: 100,
+  sunlight: [1, 2],
+  growingSeasons: [2, 8],
+  instructions: [
+    { typeId: 1, description: "plant them" },
+    { typeId: 2, description: "prune them" },
+  ],
+};
+
 module.exports = {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  newPlantData,
   u1Token,
   u2Token,
   adminToken,
