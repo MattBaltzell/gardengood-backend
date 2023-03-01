@@ -76,36 +76,83 @@ class Plant {
   }
 
   /**
-   * Find all plants
+   * Find all plants (optional filter on searchFilters)
+   *
+   *  searchFilters (all optional):
+   * - name (will find case-insensitive, partial matches)
+   * TODO: more filters can be added later
    */
 
-  static async findAll() {
-    const plants = await db.query(
-      `
-      SELECT p.id,
-          p.name,
-          p.species,
-          p.img_url AS "imgUrl",
-          p.is_perrenial AS "isPerrenial",
-          p.description,
-          p.days_to_maturity_min AS "daysToMaturityMin",
-          p.days_to_maturity_max AS "daysToMaturityMax",
-          json_agg(DISTINCT sun.name) AS "sunlight",
-          json_agg(DISTINCT sea.name) AS "growingSeasons"
-      FROM plants AS p
-      JOIN plants_sunlight AS psu
-      ON p.id = psu.plant_id
-      JOIN sunlight AS sun
-      ON psu.sunlight_id = sun.id
-      JOIN plants_seasons AS pse
-      ON p.id = pse.plant_id
-      JOIN seasons AS sea
-      ON pse.season_id = sea.id
-      GROUP BY p.id
-      ORDER BY p.name`
-    );
+  // static async findAll() {
+  //   const plants = await db.query(
+  //     `
+  //     SELECT p.id,
+  //         p.name,
+  //         p.species,
+  //         p.img_url AS "imgUrl",
+  //         p.is_perrenial AS "isPerrenial",
+  //         p.description,
+  //         p.days_to_maturity_min AS "daysToMaturityMin",
+  //         p.days_to_maturity_max AS "daysToMaturityMax",
+  //         json_agg(DISTINCT sun.name) AS "sunlight",
+  //         json_agg(DISTINCT sea.name) AS "growingSeasons"
+  //     FROM plants AS p
+  //     JOIN plants_sunlight AS psu
+  //     ON p.id = psu.plant_id
+  //     JOIN sunlight AS sun
+  //     ON psu.sunlight_id = sun.id
+  //     JOIN plants_seasons AS pse
+  //     ON p.id = pse.plant_id
+  //     JOIN seasons AS sea
+  //     ON pse.season_id = sea.id
+  //     GROUP BY p.id
+  //     ORDER BY p.name`
+  //   );
 
-    return plants.rows;
+  //   returns [{plant}, ...];
+  // }
+
+  static async findAll(searchFilters = {}) {
+    let query = `SELECT p.id,
+                      p.name,
+                      p.species,
+                      p.img_url AS "imgUrl",
+                      p.is_perrenial AS "isPerrenial",
+                      p.description,
+                      p.days_to_maturity_min AS "daysToMaturityMin",
+                      p.days_to_maturity_max AS "daysToMaturityMax",
+                      json_agg(DISTINCT sun.name) AS "sunlight",
+                      json_agg(DISTINCT sea.name) AS "growingSeasons"
+                  FROM plants AS p
+                  JOIN plants_sunlight AS psu
+                  ON p.id = psu.plant_id
+                  JOIN sunlight AS sun
+                  ON psu.sunlight_id = sun.id
+                  JOIN plants_seasons AS pse
+                  ON p.id = pse.plant_id
+                  JOIN seasons AS sea
+                  ON pse.season_id = sea.id
+                  GROUP BY p.id`;
+
+    let whereExpressions = [];
+    let queryValues = [];
+
+    const { name } = searchFilters;
+
+    // For each possible search term, add to whereExpressions and queryValues so
+    // we can generate the right SQL
+
+    if (name) {
+      queryValues.push(`%${name}%`);
+      whereExpressions.push(`name ILIKE $${queryValues.length}`);
+    }
+
+    // Finalize query and return results
+
+    query += " ORDER BY p.name";
+    const plantsRes = await db.query(query, queryValues);
+
+    return plantsRes.rows;
   }
 
   /** Given a plant id, return data about a plant */

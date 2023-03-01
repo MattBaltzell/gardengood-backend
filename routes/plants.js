@@ -27,8 +27,9 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 /** Show all plants */
 
 router.get("/", ensureLoggedIn, async function (req, res, next) {
+  const q = req.query;
   try {
-    const plants = await Plant.findAll();
+    const plants = await Plant.findAll({ q });
     return res.json({ plants });
   } catch (err) {
     return next(err);
