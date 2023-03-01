@@ -71,7 +71,7 @@ describe("register", function () {
       ...newUser,
       password: "password",
     });
-    expect(user).toEqual({ ...newUser, joinAt: expect.any(Date) });
+    expect(user).toEqual(newUser);
     const found = await db.query("SELECT * FROM users WHERE username = 'new'");
     expect(found.rows.length).toEqual(1);
     expect(found.rows[0].is_admin).toEqual(false);
@@ -87,7 +87,6 @@ describe("register", function () {
     expect(user).toEqual({
       ...newUser,
       isAdmin: true,
-      joinAt: expect.any(Date),
     });
     const found = await db.query("SELECT * FROM users WHERE username = 'new'");
     expect(found.rows.length).toEqual(1);
@@ -148,8 +147,8 @@ describe("get", function () {
       firstName: "U1F",
       lastName: "U1L",
       email: "u1@email.com",
-      joinAt: expect.any(Date),
       zipCode: "36830",
+      joinAt: expect.any(Date),
       isAdmin: false,
     });
   });
