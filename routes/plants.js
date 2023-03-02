@@ -29,7 +29,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 router.get("/", ensureLoggedIn, async function (req, res, next) {
   const q = req.query;
   try {
-    const plants = await Plant.findAll({ q });
+    const plants = await Plant.findAll(q);
     return res.json({ plants });
   } catch (err) {
     return next(err);

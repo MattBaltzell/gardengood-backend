@@ -131,8 +131,7 @@ class Plant {
                   JOIN plants_seasons AS pse
                   ON p.id = pse.plant_id
                   JOIN seasons AS sea
-                  ON pse.season_id = sea.id
-                  GROUP BY p.id`;
+                  ON pse.season_id = sea.id`;
 
     let whereExpressions = [];
     let queryValues = [];
@@ -144,12 +143,17 @@ class Plant {
 
     if (name) {
       queryValues.push(`%${name}%`);
-      whereExpressions.push(`name ILIKE $${queryValues.length}`);
+      whereExpressions.push(`p.name ILIKE $${queryValues.length}`);
     }
 
+    if (whereExpressions.length > 0) {
+      query += " WHERE " + whereExpressions.join(" AND ");
+    }
     // Finalize query and return results
 
-    query += " ORDER BY p.name";
+    query += " GROUP BY p.id ORDER BY p.name";
+
+    console.log(query);
     const plantsRes = await db.query(query, queryValues);
 
     return plantsRes.rows;
