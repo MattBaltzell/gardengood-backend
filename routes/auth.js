@@ -62,4 +62,16 @@ router.post("/register", async function (req, res, next) {
   }
 });
 
+const apiURL = process.env.WEATHER_APP_API_KEY;
+
+router.get("/data", async (req, res, next) => {
+  try {
+    const response = await fetch(apiURL);
+    const data = response.json();
+    res.json({ data });
+  } catch (error) {
+    return next(err);
+  }
+});
+
 module.exports = router;
