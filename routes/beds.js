@@ -1,7 +1,11 @@
 "use strict";
 
 const express = require("express");
-const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
+const {
+  ensureLoggedIn,
+  ensureAdmin,
+  ensureCorrectUserOrAdmin,
+} = require("../middleware/auth");
 const jsonschema = require("jsonschema");
 const bedNewSchema = require("../schemas/bedNew.json");
 const Bed = require("../models/bed");
@@ -40,7 +44,12 @@ router.post("/:gardenId", ensureLoggedIn, async function (req, res, next) {
  * Authorization required: logged in
  **/
 
-router.get("/:id", ensureLoggedIn, async function (req, res, next) {
+// Move these to Users routes
+// users/:username/gardens/gardenId
+// users/:username/beds/:bedId
+// users/:username/beds/gardens/:gardenId
+
+router.get("/:id", ensureCorrectUserOrAdmin, async function (req, res, next) {
   try {
     const bed = await Bed.get(req.params.id);
     return res.json({ bed });

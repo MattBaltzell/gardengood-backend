@@ -47,4 +47,20 @@ router.get("/:id", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
+/** GET /bed[bedId] => { user }
+ *
+ * Returns { id, plantId, bedId, qty, plantedAt }
+ *
+ * Authorization required: logged in
+ **/
+
+router.get("/bed/:bedId", ensureLoggedIn, async function (req, res, next) {
+  try {
+    const crops = await Crop.findAll(req.params.bedId);
+    return res.json({ crops });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;
