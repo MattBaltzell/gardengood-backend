@@ -4,11 +4,9 @@ const db = require("../db");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 const { NotFoundError, BadRequestError } = require("../expressError");
 
-/** Related functions for users. */
+/** Related functions for crops. */
 
 class Crop {
-  // create({plantID, bedID, qty})    add 'planted_at'= CURRENT_TIMESTAMP in query
-
   /** Create crop with plantId, bedId, and qty.
    *
    * Returns { id, plantId, bedId, qty, plantedAt }
@@ -71,6 +69,30 @@ class Crop {
     if (!crop) throw new NotFoundError(`No crop: ${id}`);
 
     return crop;
+  }
+
+  /** Given a bed id, return data about crops.
+   *
+   * Returns [{ id, plantId, bedId, qty, plantedAt }]
+   *
+   * Throws NotFoundError if crop not found.
+   **/
+  static async findAll(bedId) {
+    const cropRes = await db.query(
+      `SELECT   id,
+                plant_id AS "plantId",
+                bed_id AS "bedId",
+                qty,
+                planted_at AS "plantedAt"
+            FROM crops
+            WHERE bed_id = $1
+            ORDER BY id`,
+      [bedId]
+    );
+
+    const crops = cropRes.rows;
+
+    return crops;
   }
 
   // update(id,{plantID, bedId, qty})
