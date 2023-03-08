@@ -7,7 +7,12 @@ const { NotFoundError, BadRequestError } = require("../expressError");
 /** Related functions for users. */
 
 class Garden {
-  // create
+  /** Given username, garden name, and description, create garden.
+   *
+   * Returns { id, plantId, bedId, qty, plantedAt }
+   *
+   * Throws NotFoundError if garden not found.
+   **/
 
   static async create({ username, name, description }) {
     const gardenRes = await db.query(
@@ -56,6 +61,18 @@ class Garden {
 
     if (!garden) throw new NotFoundError(`No garden: ${id}`);
 
+    const bedRes = await db.query(
+      `SELECT   id, 
+                name
+            FROM beds
+            WHERE garden_id = $1
+            ORDER BY name
+        `,
+      [id]
+    );
+
+    garden.beds = bedRes.rows;
+
     return garden;
   }
 
@@ -74,7 +91,6 @@ class Garden {
     );
 
     const gardens = gardenRes.rows;
-
     return gardens;
   }
 
