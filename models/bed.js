@@ -13,16 +13,15 @@ class Bed {
   static async create({ name, gardenId }) {
     const bedRes = await db.query(
       `INSERT INTO beds
-            (name, garden_id AS "gardenId")
+            (name, garden_id )
             VALUES ($1,$2)
-            RETURNING id, name, garden_id
+            RETURNING id, name, garden_id AS "gardenId"
     `,
       [name, gardenId]
     );
 
     const bed = bedRes.rows[0];
-
-    return { bed };
+    return bed;
   }
 
   /** Given a bed id, return data about bed.
@@ -33,15 +32,9 @@ class Bed {
    **/
   static async get(id) {
     const bedRes = await db.query(
-      `SELECT   g.id,
-                g.name,
-                g.description,
-                json_agg(ug.username) AS "users"
-            FROM users_beds AS ug
-            JOIN beds AS g
-            ON ug.bed_id = g.id
-            WHERE id = $1
-            GROUP BY g.id`,
+      `SELECT  id, name, garden_id
+          FROM beds
+          WHERE id=$1`,
       [id]
     );
 
@@ -52,18 +45,11 @@ class Bed {
     return bed;
   }
 
-  static async findAll(username) {
+  static async findAll(gardenId) {
     const bedRes = await db.query(
-      `SELECT   g.id,
-                g.name,
-                g.description,
-                json_agg(ug.username) AS "users"
-            FROM users_beds AS ug
-            JOIN beds AS g
-            ON ug.bed_id = g.id
-            WHERE username = $1
-            GROUP BY g.id`,
-      [username]
+      `SELECT * FROM beds
+          WHERE garden_id = $1`,
+      [gardenId]
     );
 
     const beds = bedRes.rows;
