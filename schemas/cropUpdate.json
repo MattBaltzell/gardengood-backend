@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/cropUpdate.json",
+  "type": "object",
+  "properties": {
+    "bedId": {
+      "type": "integer"
+    },
+    "qty": {
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}
