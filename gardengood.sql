@@ -1,7 +1,7 @@
 \echo 'Delete and recreate gardengood db?'
 \prompt 'Return for yes or control-C to cancel > ' foo
 
-DROP DATABASE [IF EXISTS] gardengood;
+DROP DATABASE IF EXISTS gardengood;
 CREATE DATABASE gardengood;
 \connect gardengood
 
@@ -12,7 +12,7 @@ CREATE DATABASE gardengood;
 \echo 'Delete and recreate gardengood_test db?'
 \prompt 'Return for yes or control-C to cancel > ' foo
 
-DROP DATABASE [IF EXISTS] gardengood_test;
+DROP DATABASE IF EXISTS gardengood_test;
 CREATE DATABASE gardengood_test;
 \connect gardengood_test
 
