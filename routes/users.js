@@ -14,6 +14,12 @@ const Crop = require("../models/crop");
 const { createToken } = require("../helpers/tokens");
 const userNewSchema = require("../schemas/userNew.json");
 const userUpdateSchema = require("../schemas/userUpdate.json");
+const gardenNewSchema = require("../schemas/gardenNew.json");
+const gardenUpdateSchema = require("../schemas/gardenUpdate.json");
+const bedNewSchema = require("../schemas/bedNew.json");
+const bedUpdateSchema = require("../schemas/bedUpdate.json");
+const cropNewSchema = require("../schemas/cropNew.json");
+const cropUpdateSchema = require("../schemas/cropUpdate.json");
 
 const router = express.Router();
 
@@ -246,8 +252,7 @@ router.post(
         const errs = validator.errors.map((e) => e.stack);
         throw new BadRequestError(errs);
       }
-      const { name } = req.body;
-      const { gardenId } = req.params;
+      const { name, gardenId } = req.body;
       const bed = await Bed.create({ name, gardenId });
       return res.status(201).json(bed);
     } catch (err) {
