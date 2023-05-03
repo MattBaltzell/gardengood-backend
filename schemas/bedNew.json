@@ -5,6 +5,9 @@
   "properties": {
     "name": {
       "type": "string"
+    },
+    "gardenId": {
+      "type": "integer"
     }
   },
   "additionalProperties": false,
