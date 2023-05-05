@@ -207,6 +207,32 @@ router.get(
   }
 );
 
+/** PATCH /[username]/gardens/[id] => { garden }
+ *
+ * Returns { id, name, description }
+ *
+ * Authorization required: correct user or admin
+ **/
+
+router.patch(
+  "/:username/gardens/:id",
+  ensureCorrectUserOrAdmin,
+  async function (req, res, next) {
+    try {
+      const validator = jsonschema.validate(req.body, gardenUpdateSchema);
+      if (!validator.valid) {
+        const errs = validator.errors.map((e) => e.stack);
+        throw new BadRequestError(errs);
+      }
+      const id = req.params.id;
+      const garden = await Garden.update(id, req.body);
+      return res.json({ garden });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 /** DELETE /[username]/gardens/[id] => { garden }
  *
  * Returns { deleted: name }
