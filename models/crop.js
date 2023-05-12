@@ -7,7 +7,7 @@ const { NotFoundError, BadRequestError } = require("../expressError");
 /** Related functions for crops. */
 
 class Crop {
-  /** Create crop with plantId, bedId, and qty.
+  /** CREATE -- Create crop with plantId, bedId, and qty.
    *
    * Returns { id, plantId, bedId, qty, plantedAt }
    *
@@ -15,7 +15,7 @@ class Crop {
    **/
   static async create({ plantId, bedId, qty }) {
     const plantRes = await db.query(
-      `SELECT id FROM plants
+      `SELECT id, name FROM plants
             WHERE id = $1 `,
       [plantId]
     );
@@ -23,7 +23,7 @@ class Crop {
     if (!plantRes.rows[0]) throw new NotFoundError(`No plant: ${plantId}`);
 
     const bedRes = await db.query(
-      `SELECT id FROM beds
+      `SELECT id, garden_id FROM beds
               WHERE id = $1 `,
       [bedId]
     );
@@ -37,16 +37,22 @@ class Crop {
              qty, 
              planted_at)
         VALUES($1,$2,$3,CURRENT_TIMESTAMP)
-        RETURNING id,plant_id AS "plantId", bed_id AS "bedId", qty, planted_at AS "plantedAt"
+        RETURNING id,
+                  bed_id AS "bedId",
+                  qty, 
+                  planted_at AS "plantedAt"
         `,
       [plantId, bedId, qty]
     );
-    const plant = cropRes.rows[0];
+    const crop = cropRes.rows[0];
 
-    return plant;
+    crop.gardenId = bedRes.rows[0].garden_id;
+    crop.plant = plantRes.rows[0];
+
+    return crop;
   }
 
-  /** Given a crop id, return data about crop.
+  /** GET -- Given a crop id, return data about crop.
    *
    * Returns { id, plantId, bedId, qty, plantedAt }
    *
@@ -54,50 +60,99 @@ class Crop {
    **/
   static async get(id) {
     const cropRes = await db.query(
-      `SELECT   id,
-                plant_id AS "plantId",
-                bed_id AS "bedId",
-                qty,
-                planted_at AS "plantedAt"
-            FROM crops
-            WHERE id = $1`,
+      `SELECT c.id,
+              c.plant_id AS "plantId",
+              c.bed_id AS "bedId",
+              b.garden_id AS "gardenId",
+              c.qty,
+              c.planted_at AS "plantedAt",
+              json_build_object('id', p.id, 'name', p.name) AS plant
+      FROM crops AS c
+      JOIN beds AS b ON c.bed_id = b.id
+      JOIN plants AS p ON c.plant_id = p.id
+      WHERE c.id = $1`,
       [id]
     );
 
     const crop = cropRes.rows[0];
-
     if (!crop) throw new NotFoundError(`No crop: ${id}`);
+
+    delete crop.plantId;
 
     return crop;
   }
 
-  /** Given a bed id, return data about crops.
+  /** FIND ALL -- Given a bed id, return data about crops.
    *
    * Returns [{ id, plantId, bedId, qty, plantedAt }]
    *
    * Throws NotFoundError if crop not found.
    **/
-  static async findAll(bedId) {
-    const cropRes = await db.query(
-      `SELECT   id,
-                plant_id AS "plantId",
-                bed_id AS "bedId",
-                qty,
-                planted_at AS "plantedAt"
-            FROM crops
-            WHERE bed_id = $1
-            ORDER BY id`,
-      [bedId]
-    );
+  static async findAll() {
+    const cropRes = await db.query(`
+      SELECT c.id,
+             c.plant_id AS "plantId",
+             c.bed_id AS "bedId",
+             b.garden_id AS "gardenId",
+             c.qty,
+             c.planted_at AS "plantedAt",
+             json_build_object('id', p.id, 'name', p.name) AS plant
+      FROM crops AS c
+      JOIN beds AS b ON c.bed_id = b.id
+      JOIN plants AS p ON c.plant_id = p.id
+    `);
 
-    const crops = cropRes.rows;
+    const crops = cropRes.rows.map((crop) => {
+      delete crop.plantId;
+      return crop;
+    });
 
     return crops;
   }
 
-  // update(id,{plantID, bedId, qty})
+  /** UPDATE -- Given a crop id, update data about crops.
+   *
+   * Returns { id, plantId, bedId, qty, plantedAt }
+   *
+   * Throws NotFoundError if crop not found.
+   **/
+  static async update(id, data) {
+    const { setCols, values } = sqlForPartialUpdate(data, {
+      plantId: "plant_id",
+      bedId: "bed_id",
+    });
+    const idVarIdx = "$" + (values.length + 1);
 
-  // delete(id)
+    const querySql = `UPDATE crops 
+                      SET ${setCols} 
+                      WHERE id = ${idVarIdx} 
+                      RETURNING id, plant_id AS "plantId", bed_id AS "bedId", qty`;
+
+    const result = await db.query(querySql, [...values, id]);
+    const updatedCrop = result.rows[0];
+
+    if (!updatedCrop) throw new NotFoundError(`No crop: ${id}`);
+
+    return updatedCrop;
+  }
+
+  /** DELETE -- Given a crop id, update data about crops.
+   *
+   * Returns { deleted: deletedId }
+   *
+   * Throws NotFoundError if crop not found.
+   **/
+  static async remove(id) {
+    const deleteRes = await db.query(
+      `DELETE FROM crops WHERE id = $1 RETURNING id`,
+      [id]
+    );
+
+    const deletedId = deleteRes.rows[0]?.id;
+    if (!deletedId) throw new NotFoundError(`No crop: ${id}`);
+
+    return deleteRes.rows[0];
+  }
 }
 
 module.exports = Crop;

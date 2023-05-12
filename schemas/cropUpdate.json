@@ -3,6 +3,9 @@
   "$id": "http://example.com/cropUpdate.json",
   "type": "object",
   "properties": {
+    "plantId": {
+      "type": "integer"
+    },
     "bedId": {
       "type": "integer"
     },
